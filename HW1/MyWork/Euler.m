@@ -1,4 +1,4 @@
-function xNew=FindNext_A(x,delta,A)
+function xNew=Euler(x,delta,A)
 xDot=[0 0]';
 xNew=xDot;
 xDot(1)=A(1,1)*x(1)+A(1,2)*x(2);
