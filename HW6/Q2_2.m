@@ -22,7 +22,7 @@ for i=1:totalstep
 end
 
 
-plot(m_hat);
+plot([0:1:totalstep-1]*delta,m_hat);
 title('On line');
 xlabel('time');
 ylabel('m_h_a_t');
