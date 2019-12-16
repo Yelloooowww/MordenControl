@@ -2,9 +2,10 @@ clear;clc;
 totalStep=200;
 a1=0.3;a2=-0.88;b1=0.9;b2=0.6;%system
 for k=1:totalStep
-    d(k)=0.01*(rand-0.5);
+    d(k)=0.1*(rand-0.5);
 end
-%1-a-A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%1-a-A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%just run with unit step input
 y1A=[1:totalStep]*0;
 u1A=[1:totalStep]*0;
 y1A(1)=0;y1A(2)=0;u1A(1)=0;u1A(2)=1;
@@ -18,7 +19,8 @@ xlabel("k");
 ylabel("y(k)");
 title("1-a-A (已知G(z),u=1)");
 
-%1-a-B%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%1-a-B%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%just run with the given input
 y1B=[1:totalStep]*0;
 u1B=[1:totalStep]*0;
 y1B(1)=0;y1B(2)=0;
@@ -35,7 +37,8 @@ ylabel("y(k)");
 title("1-a-B (已知G(z),u如題目指定)");
 
 
-%1-b-A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%1-b-A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%use the optimal method to find the system parameter whit dataA
 %find matrix phi%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for k=3:length(y1A)+1
     phiA(k-1,1)=y1A(k-1);
@@ -60,7 +63,8 @@ a2A=-thetaA(2);
 b1A=thetaA(3);
 b2A=thetaA(4);
 
-%1-b-B%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%1-b-B%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%use the optimal method to find the system parameter whit dataB
 %find matrix phi%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for k=3:length(y1B)+1
     phiB(k-1,1)=y1B(k-1);
@@ -85,7 +89,8 @@ a2B=-thetaB(2);
 b1B=thetaB(3);
 b2B=thetaB(4);
 
-%1-b-C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%1-b-C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%compare the ans
 fprintf("Ans from A:\n");
 fprintf("a1=%f (error=%2f )\n",a1A,(a1A-a1));
 fprintf("a2=%f (error=%2f )\n",a2A,(a2A-a2));
@@ -97,14 +102,14 @@ fprintf("a2=%f (error=%2f )\n",a2B,(a2B-a2));
 fprintf("b1=%f (error=%2f )\n",b1B,(b1B-b1));
 fprintf("b2=%f (error=%2f )\n",b2B,(b2B-b2));
 
-%1-c-A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%1-c-A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %pole assignment
 poly=conv([1,-0.82],conv([1,-0.5+0.5i],[1,-0.5-0.5i]));%characteristic poly.
 const=[1 b1A 0;a1A b2A b1A;a2A 0 b2A];
 b=[poly(2)-a1A;poly(3)-a2A;poly(4)];
 x=inv(const)*b;
 alpha1A=x(1);beta0A=x(2);beta1A=x(3);
-%1-c-B%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%1-c-B%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %pole assignment
 poly=conv([1,-0.82],conv([1,-0.5+0.5i],[1,-0.5-0.5i]));%characteristic poly.
 const=[1 b1B 0;a1B b2B b1B;a2B 0 b2B];
@@ -114,6 +119,7 @@ alpha1B=x(1);beta0B=x(2);beta1B=x(3);
 
 
 %1-c-C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%compare the control design from dataA and dataB
 %controller A
 numA=conv([b1,b2],[beta0A,beta1A]);%C(z)*G(z)
 denA=conv([1,a1,a2],[1,alpha1A]);%C(z)*G(z)
