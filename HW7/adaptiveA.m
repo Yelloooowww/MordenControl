@@ -1,7 +1,7 @@
 %online adaptive control
 %(unit step input)
 clear;clc;
-totalStep=1000;step1=50;step2=900;
+totalStep=1000;step1=5;step2=900;
 a1=0.3;a2=-0.88;b1=0.9;b2=0.6;%system
 Correctalpha1=4.435315;%C(z) design from the real sys.
 Correctbeta0=-7.283683;
