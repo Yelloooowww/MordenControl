@@ -1,5 +1,5 @@
 clear;clc;
-totalStep=200;
+totalStep=1000;
 a1=0.3;a2=-0.88;b1=0.9;b2=0.6;%system
 for k=1:totalStep
     d(k)=0.1*(rand-0.5);
@@ -116,10 +116,25 @@ const=[1 b1B 0;a1B b2B b1B;a2B 0 b2B];
 b=[poly(2)-a1B;poly(3)-a2B;poly(4)];
 x=inv(const)*b;
 alpha1B=x(1);beta0B=x(2);beta1B=x(3);
+%the correct one (just for comparison)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%pole assignment
+poly=conv([1,-0.82],conv([1,-0.5+0.5i],[1,-0.5-0.5i]));%characteristic poly.
+const=[1 b1 0;a1 b2 b1;a2 0 b2];
+b=[poly(2)-a1;poly(3)-a2;poly(4)];
+x=inv(const)*b;
+Correctalpha1=x(1);Correctbeta0=x(2);Correctbeta1=x(3);
 
 
 %1-c-C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %compare the control design from dataA and dataB
+fprintf('Controller A:\n');
+fprintf('alpha1=%f (error=%f)\n',alpha1A,abs(Correctalpha1-alpha1A));
+fprintf('beta0=%f (error=%f)\n',beta0A,abs(Correctbeta0-beta0A));
+fprintf('beta1=%f (error=%f)\n',alpha1A,abs(Correctbeta1-alpha1A));
+fprintf('Controller B:\n');
+fprintf('alpha1=%f (error=%f)\n',alpha1B,abs(Correctalpha1-alpha1B));
+fprintf('beta0=%f (error=%f)\n',beta0B,abs(Correctbeta0-beta0B));
+fprintf('beta1=%f (error=%f)\n',alpha1B,abs(Correctbeta1-alpha1B));
 %controller A
 numA=conv([b1,b2],[beta0A,beta1A]);%C(z)*G(z)
 denA=conv([1,a1,a2],[1,alpha1A]);%C(z)*G(z)
@@ -130,6 +145,11 @@ numB=conv([b1,b2],[beta0B,beta1B]);%C(z)*G(z)
 denB=conv([1,a1,a2],[1,alpha1B]);%C(z)*G(z)
 fb_numB=numB;%equivalent open loop sys.
 fb_denB=[0,numB]+denB;%equivalent open loop sys.
+%the correct one (just for comparison)
+numCorrect=conv([b1,b2],[Correctbeta0,Correctbeta1]);%C(z)*G(z)
+denCorrect=conv([1,a1,a2],[1,Correctalpha1]);%C(z)*G(z)
+fb_numCorrect=numCorrect;%equivalent open loop sys.
+fb_denCorrect=[0,numCorrect]+denCorrect;%equivalent open loop sys.
 
 %controller A with unit step input
 y3A=[1:totalStep]*0;
@@ -149,11 +169,20 @@ for k=1:totalStep-3
     u3B(k+3)=1;
     y3B(k+3)=-fb_denB(2)*y3B(k+2)-fb_denB(3)*y3B(k+1)-fb_denB(4)*y3B(k)+fb_numB(1)*u3B(k+2)+fb_numB(2)*u3B(k+1)+fb_numB(3)*u3B(k)+d(k+3);
 end 
+%the correct controller with unit step input
+y3Correct=[1:totalStep]*0;
+u3Correct=[1:totalStep]*0;
+y3Correct(1)=0;y3Correct(2)=0;y3Correct(3)=0;
+u3Correct(1)=1;u3Correct(2)=1;u3Correct(3)=1;
+for k=1:totalStep-3
+    u3Correct(k+3)=1;
+    y3Correct(k+3)=-fb_denCorrect(2)*y3Correct(k+2)-fb_denCorrect(3)*y3Correct(k+1)-fb_denCorrect(4)*y3Correct(k)+fb_numCorrect(1)*u3Correct(k+2)+fb_numCorrect(2)*u3Correct(k+1)+fb_numCorrect(3)*u3Correct(k)+d(k+3);
+end 
 figure(3);
-plot(y3A);hold on;plot(y3B);hold on;plot(u3B);
+plot(y3A,'r');hold on;plot(y3B,'b');hold on;plot(y3Correct,'g');hold on;plot(u3B);
 xlabel("k");
 ylabel("y(k)");
-legend('controllerA','controllerB','u=step input');
+legend('controllerA','controllerB','Correct controller','u=step input');
 title("1-c-C (比較A,B設計出的控制器,u=1)");
 
 %controller A with given input
@@ -179,11 +208,22 @@ for k=1:totalStep-3
     u3B(k+3)=sin(6*(k+3)/20)+0.5*cos(6*(k+3)/15+3.2)+0.2*sin(2.57*(k+3)/13+1.36);
     y3B(k+3)=-fb_denB(2)*y3B(k+2)-fb_denB(3)*y3B(k+1)-fb_denB(4)*y3B(k)+fb_numB(1)*u3B(k+2)+fb_numB(2)*u3B(k+1)+fb_numB(3)*u3B(k)+d(k+3);
 end 
+%the correct controller with given input
+y3Correct=[1:totalStep]*0;
+u3Correct=[1:totalStep]*0;
+y3Correct(1)=0;y3Correct(2)=0;y3Correct(3)=0;
+u3Correct(1)=sin(6*1/20)+0.5*cos(6*1/15+3.2)+0.2*sin(2.57*1/13+1.36);
+u3Correct(2)=sin(6*2/20)+0.5*cos(6*2/15+3.2)+0.2*sin(2.57*2/13+1.36);
+u3Correct(3)=sin(6*3/20)+0.5*cos(6*3/15+3.2)+0.2*sin(2.57*3/13+1.36);
+for k=1:totalStep-3
+    u3Correct(k+3)=sin(6*(k+3)/20)+0.5*cos(6*(k+3)/15+3.2)+0.2*sin(2.57*(k+3)/13+1.36);
+    y3Correct(k+3)=-fb_denCorrect(2)*y3Correct(k+2)-fb_denCorrect(3)*y3Correct(k+1)-fb_denCorrect(4)*y3Correct(k)+fb_numCorrect(1)*u3Correct(k+2)+fb_numCorrect(2)*u3Correct(k+1)+fb_numCorrect(3)*u3Correct(k)+d(k+3);
+end 
 figure(4);
-plot(y3A);hold on;plot(y3B);hold on;plot(u3B);
+plot(y3A,'r');hold on;plot(y3B,'b');hold on;plot(y3Correct,'g');plot(u3B);
 xlabel("k");
 ylabel("y(k)");
-legend('controllerA','controllerB','u');
+legend('controllerA','controllerB','Correct controller','u');
 title("1-c-C (比較A,B設計出的控制器)");
 
 
