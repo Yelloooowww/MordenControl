@@ -1,6 +1,6 @@
 %MRAC
 clear;clc;
-totaltime=10;
+totaltime=100;
 delta=0.01;
 totalstep=totaltime/delta;
 
@@ -17,7 +17,7 @@ end
 
 %select para.
 Q=[1 0;0 1000];
-Am=[0 1;-2 -3];bm=2;
+Am=[0 1;-3 -4];bm=2;
 b=1;
 P=lyap(Am,Q);
 gamma0=1;gamma1=0.5;gamma2=4;
