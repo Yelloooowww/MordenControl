@@ -1,21 +1,22 @@
 %MRAC
 clear;clc;
-totaltime=100;
+totaltime=10;
 delta=0.01;
 totalstep=totaltime/delta;
 %select para.
-Q=[0.00001 0 0;0 0.00001 0;0 0 100000];
-pole=conv([1 13],conv([1 12],[1 11]));
+Q=[0.001 0 0;0 0.001 0;0 0 2000];
+% Q=[1 0 0;0 1 0;0 0 1];
+pole=conv([1 2],conv([1 5],[1 8]));
 Am=[0 1 0;0 0 1;-pole(4) -pole(3) -pole(2)];bm=1;%model
 A=[0 1 0;0 0 1;-12 -4 -3];b=1;%real sys.
 P=lyap(Am,Q);
-gamma0=1;gamma1=1;gamma2=1;gamma3=1;
+gamma0=1;gamma1=0.5;gamma2=4;gamma3=5;
 
 %model
 xm1(1)=0;xm2(1)=0;xm3(1)=0;
 for k=1:totalstep
-%     r(k)=1;
-    r(k)=sin(0.5*k*delta)+0.3*cos(2*k*delta+4);
+    r(k)=1;
+%     r(k)=sin(0.5*k*delta)+0.3*cos(2*k*delta+4);
     xm1_dot(k)=xm2(k);
     xm2_dot(k)=xm3(k);
     xm3_dot(k)=Am(3,1)*xm1(k)+Am(3,2)*xm2(k)+Am(3,3)*xm3(k)+bm*r(k);
