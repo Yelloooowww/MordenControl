@@ -4,8 +4,7 @@ totaltime=20;
 delta=0.01;
 totalstep=totaltime/delta;
 %select para.
-Q=[0.0001 0 0;0 0.0001 0;0 0 1000];
-% Q=[1 0 0;0 1 0;0 0 1];
+Q=[0.0001 0 0;0 1 0;0 0 1000];
 pole=conv([1 13],conv([1 12],[1 11]));
 Am=[0 1 0;0 0 1;-pole(4) -pole(3) -pole(2)];bm=1;%model
 A=[0 1 0;0 0 1;-12 -4 -3];b=1;%real sys.
@@ -24,7 +23,7 @@ for k=1:totalstep
     xm3(k+1)=xm3(k)+xm3_dot(k)*delta;
 end
 
-
+%real sys.
 theta0(1)=0;theta1(1)=0;theta2(1)=0;theta3(1)=0;
 x1(1)=0;x2(1)=0;x3(1)=0;
 for k=1:totalstep
@@ -57,10 +56,10 @@ end
 
 
 plot([0:1:totalstep]*delta,x1,'r');hold on;
-% plot([0:1:totalstep]*delta,x2,'b');hold on;
-% plot([0:1:totalstep]*delta,x3,'g');hold on;
+plot([0:1:totalstep]*delta,x2,'b');hold on;
+plot([0:1:totalstep]*delta,x3,'g');hold on;
 plot([0:1:totalstep]*delta,xm1,'c');hold on;
-% plot([0:1:totalstep]*delta,xm2,'m');hold on;
-% plot([0:1:totalstep]*delta,xm3,'y');hold on;
+plot([0:1:totalstep]*delta,xm2,'m');hold on;
+plot([0:1:totalstep]*delta,xm3,'y');hold on;
 legend('x1','x2','x3','xm1','xm2','xm3');
 title('MRAC');

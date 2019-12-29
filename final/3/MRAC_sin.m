@@ -24,7 +24,7 @@ for k=1:totalstep
     xm3(k+1)=xm3(k)+xm3_dot(k)*delta;
 end
 
-
+%real sys.
 theta0(1)=0;theta1(1)=0;theta2(1)=0;theta3(1)=0;
 x1(1)=0;x2(1)=0;x3(1)=0;
 for k=1:totalstep
@@ -62,5 +62,5 @@ plot([0:1:totalstep]*delta,x1,'r');hold on;
 plot([0:1:totalstep]*delta,xm1,'c');hold on;
 % plot([0:1:totalstep]*delta,xm2,'m');hold on;
 % plot([0:1:totalstep]*delta,xm3,'y');hold on;
-% legend('x1','x2','x3','xm1','xm2','xm3');
+legend('x1','xm1');
 title('MRAC');
