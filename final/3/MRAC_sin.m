@@ -1,6 +1,6 @@
 %MRAC
 clear;clc;
-totaltime=1000;
+totaltime=1500;
 delta=0.01;
 totalstep=totaltime/delta;
 %select para.
@@ -31,11 +31,15 @@ x1(1)=0;x2(1)=0;x3(1)=0;
 tmp=0;
 for k=1:totalstep
     
-    u(k)=theta0(k)*r(k)+theta1(k)*x1(k)+theta2(k)*x2(k)+theta3(k)*x3(k);
+    if k<=500
+        u(k)=theta0(k)*r(k)+theta1(k)*x1(k)+theta2(k)*x2(k)+theta3(k)*x3(k);
+    end    
     %off line
-    if k>1000
-        if mod(k,5000)>2500
-            u(k)=0;
+    if k>500
+        if mod(k,30000)<500
+            u(k)=theta0(k)*r(k)+theta1(k)*x1(k)+theta2(k)*x2(k)+theta3(k)*x3(k);
+        else
+            u(k)=u(k-1);
         end
     end
     
