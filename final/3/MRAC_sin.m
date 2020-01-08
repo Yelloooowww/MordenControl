@@ -1,10 +1,11 @@
 %MRAC
 clear;clc;
-totaltime=100;
+totaltime=1000;
 delta=0.01;
 totalstep=totaltime/delta;
 %select para.
-Q=[0.00001 0 0;0 0.00001 0;0 0 100000];
+% Q=[0.00001 0 0;0 0.00001 0;0 0 100000];
+Q=[0.0001 0 0;0 1 0;0 0 1000];
 pole=conv([1 13],conv([1 12],[1 11]));
 Am=[0 1 0;0 0 1;-pole(4) -pole(3) -pole(2)];bm=1;%model
 A=[0 1 0;0 0 1;-12 -4 -3];b=1;%real sys.
@@ -14,8 +15,8 @@ gamma0=1;gamma1=1;gamma2=1;gamma3=1;
 %model
 xm1(1)=0;xm2(1)=0;xm3(1)=0;
 for k=1:totalstep
-%     r(k)=1;
-    r(k)=sin(0.5*k*delta)+0.3*cos(2*k*delta+4);
+    r(k)=1;
+%     r(k)=sin(0.5*k*delta)+0.3*cos(2*k*delta+4);
     xm1_dot(k)=xm2(k);
     xm2_dot(k)=xm3(k);
     xm3_dot(k)=Am(3,1)*xm1(k)+Am(3,2)*xm2(k)+Am(3,3)*xm3(k)+bm*r(k);
@@ -27,9 +28,16 @@ end
 %real sys.
 theta0(1)=0;theta1(1)=0;theta2(1)=0;theta3(1)=0;
 x1(1)=0;x2(1)=0;x3(1)=0;
+tmp=0;
 for k=1:totalstep
     
     u(k)=theta0(k)*r(k)+theta1(k)*x1(k)+theta2(k)*x2(k)+theta3(k)*x3(k);
+    %off line
+    if k>1000
+        if mod(k,5000)>2500
+            u(k)=0;
+        end
+    end
     
     x1_dot(k)=x2(k);
     x2_dot(k)=x3(k);
@@ -55,12 +63,8 @@ for k=1:totalstep
     
 end
 
-
+figure(1);
 plot([0:1:totalstep]*delta,x1,'r');hold on;
-% plot([0:1:totalstep]*delta,x2,'b');hold on;
-% plot([0:1:totalstep]*delta,x3,'g');hold on;
 plot([0:1:totalstep]*delta,xm1,'c');hold on;
-% plot([0:1:totalstep]*delta,xm2,'m');hold on;
-% plot([0:1:totalstep]*delta,xm3,'y');hold on;
 legend('x1','xm1');
-title('MRAC');
+title('MRAC_s_t_e_p _i_n_p_u_t (OFF line)');
